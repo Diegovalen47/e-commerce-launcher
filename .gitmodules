@@ -1,0 +1,9 @@
+[submodule "client-gateway"]
+	path = client-gateway
+	url = https://github.com/San-Valen-Commerce/client-gateway.git
+[submodule "products-microservice"]
+	path = products-microservice
+	url = https://github.com/San-Valen-Commerce/products-microservice.git
+[submodule "orders-microservice"]
+	path = orders-microservice
+	url = https://github.com/San-Valen-Commerce/orders-microservice.git
