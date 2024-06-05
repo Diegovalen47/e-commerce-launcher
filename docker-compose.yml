@@ -1,0 +1,72 @@
+version: '3.9'
+
+services:
+  nats-server:
+    image: nats:2.10.16
+    ports:
+      - 8222:8222
+  
+  client-gateway:
+    build:
+      context: ./client-gateway
+      args:
+        PORT: ${CLIENT_GATEWAY_PORT} 
+    ports:
+      - ${CLIENT_GATEWAY_PORT}:${CLIENT_GATEWAY_PORT}
+    volumes:
+      - ./client-gateway/src:/usr/src/app/src
+    command: pnpm start:dev
+    environment:
+      - PORT=${CLIENT_GATEWAY_PORT}
+      - NATS_SERVERS=${NATS_SERVERS}
+  
+  products-microservice:
+    depends_on:
+      - products-db
+    build: ./products-microservice
+    volumes:
+      - ./products-microservice/src:/usr/src/app/src
+    command: pnpm docker:start
+    environment:
+      - PORT=${PRODUCTS_MICROSERVICE_PORT}
+      - DATABASE_URL=${PRODUCTS_DATABASE_URL}
+      - NATS_SERVERS=${NATS_SERVERS}
+  
+  products-db:
+    image: postgres:16.3
+    restart: on-failure
+    volumes:
+      - ./products-microservice/postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      - DATABASE_HOST=127.0.0.1
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=E_COMMERCE_PRODUCTS
+
+  orders-microservice:
+    depends_on:
+      - orders-db
+    build: ./orders-microservice
+    volumes:
+      - ./orders-microservice/src:/usr/src/app/src
+    command: pnpm docker:start
+    environment:
+      - PORT=${ORDERS_MICROSERVICE_PORT}
+      - DATABASE_URL=${ORDERS_DATABASE_URL}
+      - NATS_SERVERS=${NATS_SERVERS}
+  
+  orders-db:
+    image: postgres:16.3
+    restart: on-failure
+    volumes:
+      - ./orders-microservice/postgres:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    environment:
+      - DATABASE_HOST=127.0.0.1
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=E_COMMERCE_ORDERS
+    
