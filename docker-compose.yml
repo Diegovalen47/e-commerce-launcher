@@ -69,4 +69,22 @@ services:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
       - POSTGRES_DB=E_COMMERCE_ORDERS
+
+# =========================
+# Payments Microservice
+# =========================
+  payments-microservice:
+    build: ./payments-microservice
+    volumes:
+      - ./payments-microservice/src:/usr/src/app/src
+    ports:
+      - ${PAYMENTS_PORT}:${PAYMENTS_PORT}
+    command: pnpm start:dev
+    environment:
+      - PORT=${PAYMENTS_PORT}
+      - PAYMENTS_STRIPE_SECRET=${PAYMENTS_STRIPE_SECRET}
+      - PAYMENTS_STRIPE_WEBHOOK_SECRET=${PAYMENTS_STRIPE_WEBHOOK_SECRET}
+      - PAYMENTS_STRIPE_SUCCESS_URL=${PAYMENTS_STRIPE_SUCCESS_URL}
+      - PAYMENTS_STRIPE_CANCEL_URL=${PAYMENTS_STRIPE_CANCEL_URL}
+
     
