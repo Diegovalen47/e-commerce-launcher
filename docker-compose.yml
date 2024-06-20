@@ -24,9 +24,11 @@ services:
     build: ./auth-microservice
     volumes:
       - ./auth-microservice/src:/usr/src/app/src
-    command: pnpm start:dev
+    command: pnpm docker:start
     environment:
       - NATS_SERVERS=${NATS_SERVERS}
+      - DATABASE_URL=${AUTH_DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
   
   products-microservice:
     depends_on:
