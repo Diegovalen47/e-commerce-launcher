@@ -1,0 +1,79 @@
+version: '3.9'
+
+services:
+  nats-server:
+    image: nats:2.10.16
+    container_name: nats-server-prod
+  
+  client-gateway:
+    build:
+      context: ./client-gateway
+      dockerfile: Dockerfile.prod
+      args:
+        PORT: ${CLIENT_GATEWAY_PORT}
+    image: client-gateway-prod-image
+    ports:
+      - ${CLIENT_GATEWAY_PORT}:${CLIENT_GATEWAY_PORT}
+    environment:
+      - PORT=${CLIENT_GATEWAY_PORT}
+      - NATS_SERVERS=${NATS_SERVERS}
+    container_name: client-gateway-prod
+  
+  auth-microservice:
+    build:
+      context: ./auth-microservice
+      dockerfile: Dockerfile.prod
+    image: auth-ms-prod-image
+    environment:
+      - NATS_SERVERS=${NATS_SERVERS}
+      - DATABASE_URL=${AUTH_DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+    container_name: auth-ms-prod
+  
+  products-microservice:
+    build:
+      context: ./products-microservice
+      dockerfile: Dockerfile.prod
+      args:
+        DATABASE_URL: ${PRODUCTS_DATABASE_URL}
+        NATS_SERVERS: ${NATS_SERVERS}
+    image: products-ms-prod-image
+    environment:
+      - DATABASE_URL=${PRODUCTS_DATABASE_URL}
+      - NATS_SERVERS=${NATS_SERVERS}
+    container_name: products-ms-prod
+  
+  orders-microservice:
+    build:
+      context: ./orders-microservice
+      dockerfile: Dockerfile.prod
+      args:
+        DATABASE_URL: ${ORDERS_DATABASE_URL}
+        NATS_SERVERS: ${NATS_SERVERS}
+    image: orders-ms-prod-image
+    environment:
+      - DATABASE_URL=${ORDERS_DATABASE_URL}
+      - NATS_SERVERS=${NATS_SERVERS}
+    container_name: orders-ms-prod
+
+# =========================
+# Payments Microservice
+# =========================
+  payments-microservice:
+    build:
+      context: ./payments-microservice
+      dockerfile: Dockerfile.prod
+      args:
+        PORT: ${PAYMENTS_PORT}
+    image: payments-ms-prod-image
+    ports:
+      - ${PAYMENTS_PORT}:${PAYMENTS_PORT}
+    environment:
+      - PORT=${PAYMENTS_PORT}
+      - STRIPE_SECRET=${PAYMENTS_STRIPE_SECRET}
+      - STRIPE_WEBHOOK_SECRET=${PAYMENTS_STRIPE_WEBHOOK_SECRET}
+      - STRIPE_SUCCESS_URL=${PAYMENTS_STRIPE_SUCCESS_URL}
+      - STRIPE_CANCEL_URL=${PAYMENTS_STRIPE_CANCEL_URL}
+      - NATS_SERVERS=${NATS_SERVERS}
+    container_name: payments-ms-prod
+
