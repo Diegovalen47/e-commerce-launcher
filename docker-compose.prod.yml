@@ -11,7 +11,7 @@ services:
       dockerfile: Dockerfile.prod
       args:
         PORT: ${CLIENT_GATEWAY_PORT}
-    image: client-gateway-prod-image
+    image: southamerica-east1-docker.pkg.dev/san-valen-commerce/san-valen-registry/client-gateway
     ports:
       - ${CLIENT_GATEWAY_PORT}:${CLIENT_GATEWAY_PORT}
     environment:
@@ -23,7 +23,7 @@ services:
     build:
       context: ./auth-microservice
       dockerfile: Dockerfile.prod
-    image: auth-ms-prod-image
+    image: southamerica-east1-docker.pkg.dev/san-valen-commerce/san-valen-registry/auth-ms
     environment:
       - NATS_SERVERS=${NATS_SERVERS}
       - DATABASE_URL=${AUTH_DATABASE_URL}
@@ -37,7 +37,7 @@ services:
       args:
         DATABASE_URL: ${PRODUCTS_DATABASE_URL}
         NATS_SERVERS: ${NATS_SERVERS}
-    image: products-ms-prod-image
+    image: southamerica-east1-docker.pkg.dev/san-valen-commerce/san-valen-registry/products-ms
     environment:
       - DATABASE_URL=${PRODUCTS_DATABASE_URL}
       - NATS_SERVERS=${NATS_SERVERS}
@@ -50,7 +50,7 @@ services:
       args:
         DATABASE_URL: ${ORDERS_DATABASE_URL}
         NATS_SERVERS: ${NATS_SERVERS}
-    image: orders-ms-prod-image
+    image: southamerica-east1-docker.pkg.dev/san-valen-commerce/san-valen-registry/orders-ms
     environment:
       - DATABASE_URL=${ORDERS_DATABASE_URL}
       - NATS_SERVERS=${NATS_SERVERS}
@@ -65,7 +65,7 @@ services:
       dockerfile: Dockerfile.prod
       args:
         PORT: ${PAYMENTS_PORT}
-    image: payments-ms-prod-image
+    image: southamerica-east1-docker.pkg.dev/san-valen-commerce/san-valen-registry/payments-ms
     ports:
       - ${PAYMENTS_PORT}:${PAYMENTS_PORT}
     environment:
