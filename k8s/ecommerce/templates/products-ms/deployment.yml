@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: products-ms
+  name: products-ms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: products-ms
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: products-ms
+    spec:
+      containers:
+      - image: southamerica-east1-docker.pkg.dev/san-valen-commerce/san-valen-registry/products-ms
+        name: products-ms
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: products-ms-secrets
+              key: DATABASE_URL
+        - name: NATS_SERVERS
+          value: "nats://nats-server:4222"
+        resources: {}
+status: {}
